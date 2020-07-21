@@ -7,6 +7,7 @@ const { addStatus } = require('../status/add')
 const { measureDuration, normalizeTimerName } = require('../time/main')
 
 const { fireBuildCommand } = require('./build_command')
+const { fireDeploySiteCommand } = require('./deploy_site_command')
 const { handleCommandError } = require('./error')
 const { isErrorEvent, isErrorOnlyEvent, isDeployEvent } = require('./get')
 const { firePluginCommand } = require('./plugin')
@@ -112,6 +113,7 @@ const runCommand = async function({
   origin,
   buildCommand,
   buildCommandOrigin,
+  isDeploySiteCommand,
   configPath,
   buildDir,
   nodePath,
@@ -147,6 +149,8 @@ const runCommand = async function({
     origin,
     buildCommand,
     buildCommandOrigin,
+    buildbotClient,
+    isDeploySiteCommand,
     configPath,
     buildDir,
     nodePath,
@@ -225,6 +229,8 @@ const tFireCommand = function({
   origin,
   buildCommand,
   buildCommandOrigin,
+  buildbotClient,
+  isDeploySiteCommand,
   configPath,
   buildDir,
   nodePath,
@@ -245,6 +251,10 @@ const tFireCommand = function({
       envChanges,
       logs,
     })
+  }
+
+  if (isDeploySiteCommand) {
+    return fireDeploySiteCommand(buildbotClient)
   }
 
   return firePluginCommand({
