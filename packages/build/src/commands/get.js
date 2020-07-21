@@ -42,6 +42,10 @@ const isAmongEvents = function(events, event) {
   return events.includes(event)
 }
 
+const isDeployEvent = function(event) {
+  return event === 'onDeploy'
+}
+
 // Check if failure of the event should not make the build fail
 const isSoftFailEvent =
   NETLIFY_POST_DEPLOY_ERRORS === 'true'
@@ -55,4 +59,4 @@ const isErrorEvent = isAmongEvents.bind(null, ['onError', 'onEnd'])
 // Check if the event is only triggered when an error happens
 const isErrorOnlyEvent = isAmongEvents.bind(null, ['onError'])
 
-module.exports = { getCommands, isSoftFailEvent, isErrorEvent, isErrorOnlyEvent }
+module.exports = { getCommands, isSoftFailEvent, isErrorEvent, isErrorOnlyEvent, isDeployEvent }

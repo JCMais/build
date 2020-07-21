@@ -8,7 +8,7 @@ const { measureDuration, normalizeTimerName } = require('../time/main')
 
 const { fireBuildCommand } = require('./build_command')
 const { handleCommandError } = require('./error')
-const { isErrorEvent, isErrorOnlyEvent } = require('./get')
+const { isErrorEvent, isErrorOnlyEvent, isDeployEvent } = require('./get')
 const { firePluginCommand } = require('./plugin')
 
 // Run all commands.
@@ -18,6 +18,8 @@ const { firePluginCommand } = require('./plugin')
 // Runs `onEnd` events at the end, whether an error was thrown or not.
 const runCommands = async function({
   commands,
+  buildbotClient,
+  triggerDeployWithBuildbotServer,
   configPath,
   buildDir,
   nodePath,
@@ -48,6 +50,8 @@ const runCommands = async function({
       } = await runCommand({
         event,
         childProcess,
+        buildbotClient,
+        triggerDeployWithBuildbotServer,
         package,
         pluginPackageJson,
         loadedFrom,
@@ -100,6 +104,8 @@ const runCommands = async function({
 const runCommand = async function({
   event,
   childProcess,
+  buildbotClient,
+  triggerDeployWithBuildbotServer,
   package,
   pluginPackageJson,
   loadedFrom,
@@ -125,7 +131,7 @@ const runCommand = async function({
   timers,
   testOpts,
 }) {
-  if (!shouldRunCommand({ event, package, error, failedPlugins })) {
+  if (!shouldRunCommand({ event, package, error, failedPlugins, skipDeployCommands: !triggerDeployWithBuildbotServer })) {
     return {}
   }
 
@@ -187,10 +193,14 @@ const runCommand = async function({
 // `onError()` is not run otherwise.
 // `onEnd()` is always run, regardless of whether the current or other plugins
 // failed.
-const shouldRunCommand = function({ event, package, error, failedPlugins }) {
+const shouldRunCommand = function({ event, package, error, failedPlugins, skipDeployCommands = true }) {
   const isError = error !== undefined || failedPlugins.includes(package)
   if (isError) {
     return isErrorEvent(event)
+  }
+
+  if (isDeployEvent(event)) {
+    return !skipDeployCommands
   }
 
   return !isErrorOnlyEvent(event)
