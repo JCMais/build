@@ -122,6 +122,8 @@ const tExecBuild = async function({
   errorParams,
   logs,
   timers,
+  buildbotServerSocket,
+  triggerDeployWithBuildbotServer,
   sendStatus,
 }) {
   const {
@@ -176,6 +178,8 @@ const tExecBuild = async function({
     timers: timersA,
     sendStatus,
     testOpts,
+    buildbotServerSocket,
+    triggerDeployWithBuildbotServer,
   })
   return { netlifyConfig, siteInfo, commandsCount, timers: timersB }
 }
@@ -191,6 +195,8 @@ const runAndReportBuild = async function({
   childEnv,
   functionsDistDir,
   buildImagePluginsDir,
+  buildbotServerSocket,
+  triggerDeployWithBuildbotServer,
   dry,
   siteInfo,
   mode,
@@ -224,6 +230,8 @@ const runAndReportBuild = async function({
       debug,
       timers,
       testOpts,
+      buildbotServerSocket,
+      triggerDeployWithBuildbotServer,
     })
     await reportStatuses({
       statuses,
@@ -279,6 +287,8 @@ const initAndRunBuild = async function({
   debug,
   timers,
   testOpts,
+  buildbotServerSocket,
+  triggerDeployWithBuildbotServer,
 }) {
   const constants = await getConstants({ configPath, buildDir, functionsDistDir, netlifyConfig, siteInfo, token, mode })
 
