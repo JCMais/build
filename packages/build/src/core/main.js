@@ -1,5 +1,6 @@
 require('../utils/polyfills')
 
+const { startBuildbotClient, closeBuildbotClient } = require('../buildbot_client/main')
 const { getCommands } = require('../commands/get')
 const { runCommands } = require('../commands/run')
 const { handleBuildError } = require('../error/handle')
@@ -303,15 +304,18 @@ const initAndRunBuild = async function({
     timers,
   })
 
-  const { childProcesses, timers: timersB } = await startPlugins({
-    pluginsOptions,
-    buildDir,
-    nodePath,
-    childEnv,
-    mode,
-    logs,
-    timers: timersA,
-  })
+  const [{ childProcesses, timers: timersB }, buildbotClient] = await Promise.all([
+    startPlugins({
+      pluginsOptions,
+      buildDir,
+      nodePath,
+      childEnv,
+      mode,
+      logs,
+      timers: timersA,
+    }),
+    triggerDeployWithBuildbotServer && startBuildbotClient(buildbotServerSocket),
+  ])
 
   try {
     return await runBuild({
@@ -336,7 +340,7 @@ const initAndRunBuild = async function({
       testOpts,
     })
   } finally {
-    await stopPlugins(childProcesses)
+    await Promise.all([stopPlugins(childProcesses), closeBuildbotClient(buildbotClient)])
   }
 }
 
