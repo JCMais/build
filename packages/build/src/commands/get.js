@@ -28,9 +28,9 @@ const addBuildCommand = function(
   return [{ event: 'onBuild', buildCommand, buildCommandOrigin }, ...pluginsCommands]
 }
 
-// Schedule the deploy command as the first 'onPostDeploy' action
+// Schedule the deploy command as the last 'onPostBuild' action
 const addDeployCommand = function(pluginsCommands) {
-  return [{ event: 'onPostDeploy', isDeploySiteCommand: true }, ...pluginsCommands]
+  return [...pluginsCommands, { event: 'onPostBuild', isDeploySiteCommand: true }]
 }
 
 // Sort plugin commands by event order.
@@ -40,10 +40,6 @@ const sortCommands = function(commands) {
 
 const isAmongEvents = function(events, event) {
   return events.includes(event)
-}
-
-const isDeployEvent = function(event) {
-  return event === 'onPostDeploy'
 }
 
 // Check if failure of the event should not make the build fail
@@ -59,4 +55,4 @@ const isErrorEvent = isAmongEvents.bind(null, ['onError', 'onEnd'])
 // Check if the event is only triggered when an error happens
 const isErrorOnlyEvent = isAmongEvents.bind(null, ['onError'])
 
-module.exports = { getCommands, isSoftFailEvent, isErrorEvent, isErrorOnlyEvent, isDeployEvent }
+module.exports = { getCommands, isSoftFailEvent, isErrorEvent, isErrorOnlyEvent }

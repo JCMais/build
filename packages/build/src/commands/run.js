@@ -9,7 +9,7 @@ const { measureDuration, normalizeTimerName } = require('../time/main')
 const { fireBuildCommand } = require('./build_command')
 const { fireDeploySiteCommand } = require('./deploy_site_command')
 const { handleCommandError } = require('./error')
-const { isErrorEvent, isErrorOnlyEvent, isDeployEvent } = require('./get')
+const { isErrorEvent, isErrorOnlyEvent } = require('./get')
 const { firePluginCommand } = require('./plugin')
 
 // Run all commands.
@@ -144,7 +144,7 @@ const runCommand = async function({
   timers,
   testOpts,
 }) {
-  if (!shouldRunCommand({ event, package, error, failedPlugins, skipDeployCommands: !triggerDeployWithBuildbotServer })) {
+  if (!shouldRunCommand({ event, package, error, failedPlugins, skipDeployCommands: !triggerDeployWithBuildbotServer, isDeploySiteCommand })) {
     return {}
   }
 
@@ -208,13 +208,13 @@ const runCommand = async function({
 // `onError()` is not run otherwise.
 // `onEnd()` is always run, regardless of whether the current or other plugins
 // failed.
-const shouldRunCommand = function({ event, package, error, failedPlugins, skipDeployCommands = true }) {
+const shouldRunCommand = function({ event, package, error, failedPlugins, skipDeployCommands = true, isDeploySiteCommand }) {
   const isError = error !== undefined || failedPlugins.includes(package)
   if (isError) {
     return isErrorEvent(event)
   }
 
-  if (isDeployEvent(event)) {
+  if (isDeploySiteCommand) {
     return !skipDeployCommands
   }
 

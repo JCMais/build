@@ -129,8 +129,8 @@ Default: none`,
     boolean: true,
     describe: `Feature flag.
 When enabled, triggers a deploy by connecting to the buildbot deploy server and
-passing it a "deploySite" command. After the deploy is finished, it triggers the
-"onPostDeploy" event.
+passing it a "deploySite" command. Netlify Build then waits for the buildbot to
+finish its deploy before running the "onSuccess" and "onEnd" hooks.
 Default: false`,
     hidden: true,
   },

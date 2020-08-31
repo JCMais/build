@@ -24,11 +24,6 @@ const EVENTS = [
    * `onEnd` - Runs on build error or success
    */
   'onEnd',
-
-  /**
-   * `onPostDeploy` - Runs after build has finished and site has been deployed
-   */
-  'onPostDeploy',
 ]
 
 module.exports = { EVENTS }
