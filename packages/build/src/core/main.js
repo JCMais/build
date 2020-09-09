@@ -291,7 +291,7 @@ const initAndRunBuild = async function({
   buildbotServerSocket,
   triggerDeployWithBuildbotServer,
 }) {
-  const constants = await getConstants({ configPath, buildDir, functionsDistDir, netlifyConfig, siteInfo, token, mode })
+  const constants = await getConstants({ configPath, buildDir, functionsDistDir, netlifyConfig, siteInfo, token, mode, buildbotServerSocket })
 
   const { pluginsOptions, timers: timersA } = await getPluginsOptions({
     netlifyConfig,
