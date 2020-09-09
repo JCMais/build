@@ -7,7 +7,6 @@ const { addStatus } = require('../status/add')
 const { measureDuration, normalizeTimerName } = require('../time/main')
 
 const { fireBuildCommand } = require('./build_command')
-const { fireDeploySiteCommand } = require('./deploy_site_command')
 const { handleCommandError } = require('./error')
 const { isErrorEvent, isErrorOnlyEvent } = require('./get')
 const { firePluginCommand } = require('./plugin')
@@ -19,7 +18,6 @@ const { firePluginCommand } = require('./plugin')
 // Runs `onEnd` events at the end, whether an error was thrown or not.
 const runCommands = async function({
   commands,
-  buildbotClient,
   triggerDeployWithBuildbotServer,
   configPath,
   buildDir,
@@ -61,7 +59,6 @@ const runCommands = async function({
       } = await runCommand({
         event,
         childProcess,
-        buildbotClient,
         triggerDeployWithBuildbotServer,
         package,
         pluginPackageJson,
@@ -116,7 +113,6 @@ const runCommands = async function({
 const runCommand = async function({
   event,
   childProcess,
-  buildbotClient,
   triggerDeployWithBuildbotServer,
   package,
   pluginPackageJson,
@@ -160,7 +156,6 @@ const runCommand = async function({
     origin,
     buildCommand,
     buildCommandOrigin,
-    buildbotClient,
     isDeploySiteCommand,
     configPath,
     buildDir,
@@ -240,7 +235,6 @@ const tFireCommand = function({
   origin,
   buildCommand,
   buildCommandOrigin,
-  buildbotClient,
   isDeploySiteCommand,
   configPath,
   buildDir,
@@ -262,10 +256,6 @@ const tFireCommand = function({
       envChanges,
       logs,
     })
-  }
-
-  if (isDeploySiteCommand) {
-    return fireDeploySiteCommand(buildbotClient)
   }
 
   return firePluginCommand({

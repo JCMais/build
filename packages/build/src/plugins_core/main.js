@@ -4,26 +4,30 @@ const { LOCAL_INSTALL_PLUGIN_NAME } = require('../install/local')
 
 const FUNCTIONS_INSTALL_PLUGIN = `${__dirname}/functions_install/plugin.js`
 const FUNCTIONS_PLUGIN = `${__dirname}/functions/plugin.js`
+const DEPLOY_PLUGIN = `${__dirname}/deploy/plugin.js`
 
 // List of core plugin names
 const FUNCTIONS_PLUGIN_NAME = '@netlify/plugin-functions-core'
 const FUNCTIONS_INSTALL_PLUGIN_NAME = '@netlify/plugin-functions-install-core'
 const EDGE_HANDLERS_PLUGIN_NAME = '@netlify/plugin-edge-handlers'
+const DEPLOY_PLUGIN_NAME = '@netlify/plugin-deploy-core'
 const CORE_PLUGINS = [
   FUNCTIONS_PLUGIN_NAME,
   FUNCTIONS_INSTALL_PLUGIN_NAME,
   LOCAL_INSTALL_PLUGIN_NAME,
   EDGE_HANDLERS_PLUGIN_NAME,
+  DEPLOY_PLUGIN_NAME,
 ]
 
 const EDGE_HANDLERS_PLUGIN_PATH = require.resolve(EDGE_HANDLERS_PLUGIN_NAME)
 
 // Plugins that are installed and enabled by default
-const getCorePlugins = async function({ constants: { FUNCTIONS_SRC }, buildDir, plugins }) {
+const getCorePlugins = async function({ constants: { FUNCTIONS_SRC, BUILDBOT_SERVER_SOCKET }, buildDir, plugins }) {
   const functionsPlugin = getFunctionsPlugin(FUNCTIONS_SRC)
   const functionsInstallPlugin = getFunctionsInstallPlugin(FUNCTIONS_SRC)
   const edgeHandlersPlugin = await getEdgeHandlersPlugin({ buildDir, plugins })
-  return [functionsPlugin, functionsInstallPlugin, edgeHandlersPlugin].filter(Boolean)
+  const deployPlugin = getDeployPlugin(BUILDBOT_SERVER_SOCKET)
+  return [functionsPlugin, functionsInstallPlugin, edgeHandlersPlugin, deployPlugin].filter(Boolean)
 }
 
 // When no "Functions directory" is defined, it means users does not use
@@ -68,6 +72,14 @@ const isEdgeHandlersPlugin = function({ package }) {
 }
 
 const EDGE_HANDLERS_LOCATION = 'edge-handlers'
+
+const getDeployPlugin = function(BUILDBOT_SERVER_SOCKET) {
+  if (BUILDBOT_SERVER_SOCKET === undefined) {
+    return
+  }
+
+  return { package: DEPLOY_PLUGIN_NAME, pluginPath: DEPLOY_PLUGIN }
+}
 
 const isCorePlugin = function(package) {
   return CORE_PLUGINS.includes(package)

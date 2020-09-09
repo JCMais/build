@@ -13,7 +13,7 @@ const getCommands = function(pluginsCommands, netlifyConfig, shouldAddDeployComm
 }
 
 const addBuiltInCommands = function(pluginsCommands, netlifyConfig, shouldAddDeployCommand) {
-  return addBuildCommand(shouldAddDeployCommand ? addDeployCommand(pluginsCommands) : pluginsCommands, netlifyConfig)
+  return addBuildCommand(pluginsCommands, netlifyConfig)
 }
 
 // Merge `build.command` with plugin event handlers
@@ -26,11 +26,6 @@ const addBuildCommand = function(
   }
 
   return [{ event: 'onBuild', buildCommand, buildCommandOrigin }, ...pluginsCommands]
-}
-
-// Schedule the deploy command as the last 'onPostBuild' action
-const addDeployCommand = function(pluginsCommands) {
-  return [...pluginsCommands, { event: 'onPostBuild', isDeploySiteCommand: true }]
 }
 
 // Sort plugin commands by event order.

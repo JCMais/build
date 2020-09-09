@@ -3,7 +3,7 @@ const { promisify } = require('util')
 
 const pEvent = require('p-event')
 
-const { addErrorInfo } = require('../error/info')
+const { addErrorInfo } = require('../../error/info')
 
 const startBuildbotClient = async function(buildbotServerSocket) {
   if (buildbotServerSocket === undefined) {
