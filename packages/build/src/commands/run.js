@@ -140,7 +140,16 @@ const runCommand = async function({
   timers,
   testOpts,
 }) {
-  if (!shouldRunCommand({ event, package, error, failedPlugins, skipDeployCommands: !triggerDeployWithBuildbotServer, isDeploySiteCommand })) {
+  if (
+    !shouldRunCommand({
+      event,
+      package,
+      error,
+      failedPlugins,
+      skipDeployCommands: !triggerDeployWithBuildbotServer,
+      isDeploySiteCommand,
+    })
+  ) {
     return {}
   }
 
@@ -203,7 +212,14 @@ const runCommand = async function({
 // `onError()` is not run otherwise.
 // `onEnd()` is always run, regardless of whether the current or other plugins
 // failed.
-const shouldRunCommand = function({ event, package, error, failedPlugins, skipDeployCommands = true, isDeploySiteCommand }) {
+const shouldRunCommand = function({
+  event,
+  package,
+  error,
+  failedPlugins,
+  skipDeployCommands = true,
+  isDeploySiteCommand,
+}) {
   const isError = error !== undefined || failedPlugins.includes(package)
   if (isError) {
     return isErrorEvent(event)
@@ -235,7 +251,6 @@ const tFireCommand = function({
   origin,
   buildCommand,
   buildCommandOrigin,
-  isDeploySiteCommand,
   configPath,
   buildDir,
   nodePath,

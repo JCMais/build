@@ -290,7 +290,16 @@ const initAndRunBuild = async function({
   buildbotServerSocket,
   triggerDeployWithBuildbotServer,
 }) {
-  const constants = await getConstants({ configPath, buildDir, functionsDistDir, netlifyConfig, siteInfo, token, mode, buildbotServerSocket })
+  const constants = await getConstants({
+    configPath,
+    buildDir,
+    functionsDistDir,
+    netlifyConfig,
+    siteInfo,
+    token,
+    mode,
+    buildbotServerSocket,
+  })
 
   const { pluginsOptions, timers: timersA } = await getPluginsOptions({
     netlifyConfig,
@@ -303,17 +312,15 @@ const initAndRunBuild = async function({
     timers,
   })
 
-  const { childProcesses, timers: timersB } = await
-    startPlugins({
-      pluginsOptions,
-      buildDir,
-      nodePath,
-      childEnv,
-      mode,
-      logs,
-      timers: timersA,
-    })
-  )
+  const { childProcesses, timers: timersB } = await startPlugins({
+    pluginsOptions,
+    buildDir,
+    nodePath,
+    childEnv,
+    mode,
+    logs,
+    timers: timersA,
+  })
 
   try {
     return await runBuild({
