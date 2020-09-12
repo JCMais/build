@@ -195,8 +195,8 @@ const logDryRunEnd = function(logs) {
   logMessage(logs, `\nIf this looks good to you, run \`netlify build\` to execute the build\n`)
 }
 
-const logCommand = function({ logs, event, buildCommandOrigin, isDeploySiteCommand, package, index, error }) {
-  const description = getCommandDescription({ event, buildCommandOrigin, isDeploySiteCommand, package })
+const logCommand = function({ logs, event, buildCommandOrigin, package, index, error }) {
+  const description = getCommandDescription({ event, buildCommandOrigin, package })
   const logHeaderFunc = getLogHeaderFunc(error)
   logHeaderFunc(logs, `${index + 1}. ${description}`)
   logMessage(logs, '')

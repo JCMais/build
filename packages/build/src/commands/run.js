@@ -46,7 +46,6 @@ const runCommands = async function({
         origin,
         buildCommand,
         buildCommandOrigin,
-        isDeploySiteCommand,
       },
     ) => {
       const {
@@ -66,7 +65,6 @@ const runCommands = async function({
         origin,
         buildCommand,
         buildCommandOrigin,
-        isDeploySiteCommand,
         configPath,
         buildDir,
         nodePath,
@@ -120,7 +118,6 @@ const runCommand = async function({
   origin,
   buildCommand,
   buildCommandOrigin,
-  isDeploySiteCommand,
   configPath,
   buildDir,
   nodePath,
@@ -146,14 +143,12 @@ const runCommand = async function({
       package,
       error,
       failedPlugins,
-      skipDeployCommands: !triggerDeployWithBuildbotServer,
-      isDeploySiteCommand,
     })
   ) {
     return {}
   }
 
-  logCommand({ logs, event, buildCommandOrigin, isDeploySiteCommand, package, index, error })
+  logCommand({ logs, event, buildCommandOrigin, package, index, error })
 
   const fireCommand = getFireCommand({ package, event })
   const { newEnvChanges, newError, newStatus, timers: timersA, durationNs } = await fireCommand({
@@ -165,7 +160,6 @@ const runCommand = async function({
     origin,
     buildCommand,
     buildCommandOrigin,
-    isDeploySiteCommand,
     configPath,
     buildDir,
     nodePath,
@@ -217,16 +211,10 @@ const shouldRunCommand = function({
   package,
   error,
   failedPlugins,
-  skipDeployCommands = true,
-  isDeploySiteCommand,
 }) {
   const isError = error !== undefined || failedPlugins.includes(package)
   if (isError) {
     return isErrorEvent(event)
-  }
-
-  if (isDeploySiteCommand) {
-    return !skipDeployCommands
   }
 
   return !isErrorOnlyEvent(event)

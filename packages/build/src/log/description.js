@@ -1,11 +1,7 @@
 // Retrieve description of `build.command` or of an event handler
-const getCommandDescription = function({ event, buildCommandOrigin, isDeploySiteCommand, package }) {
+const getCommandDescription = function({ event, buildCommandOrigin, package }) {
   if (buildCommandOrigin !== undefined) {
     return getBuildCommandDescription(buildCommandOrigin)
-  }
-
-  if (isDeploySiteCommand) {
-    return `${event} command from core`
   }
 
   return `${event} command from ${package}`
