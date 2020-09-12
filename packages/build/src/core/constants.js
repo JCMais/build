@@ -17,6 +17,7 @@ const getConstants = async function({
   token,
   mode,
   buildbotServerSocket,
+  triggerDeployWithBuildbotServer,
 }) {
   const isLocal = mode !== 'buildbot'
   const cacheDir = await getCacheDir({ mode })
@@ -61,7 +62,7 @@ const getConstants = async function({
     /**
      * The path to the buildbot server socket
      */
-    BUILDBOT_SERVER_SOCKET: buildbotServerSocket,
+    BUILDBOT_SERVER_SOCKET: triggerDeployWithBuildbotServer && buildbotServerSocket,
   }
   const constantsA = mapObj(constants, (key, path) => [key, normalizePath(path, buildDir, key)])
   return constantsA

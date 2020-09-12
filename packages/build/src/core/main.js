@@ -299,6 +299,7 @@ const initAndRunBuild = async function({
     token,
     mode,
     buildbotServerSocket,
+    triggerDeployWithBuildbotServer,
   })
 
   const { pluginsOptions, timers: timersA } = await getPluginsOptions({
@@ -379,7 +380,7 @@ const runBuild = async function({
     debug,
   })
 
-  const { commands, commandsCount } = getCommands(pluginsCommands, netlifyConfig, triggerDeployWithBuildbotServer)
+  const { commands, commandsCount } = getCommands(pluginsCommands, netlifyConfig)
 
   if (dry) {
     doDryRun({ commands, commandsCount, logs })
