@@ -18,7 +18,6 @@ const { firePluginCommand } = require('./plugin')
 // Runs `onEnd` events at the end, whether an error was thrown or not.
 const runCommands = async function({
   commands,
-  triggerDeployWithBuildbotServer,
   configPath,
   buildDir,
   nodePath,
@@ -37,16 +36,7 @@ const runCommands = async function({
     commands,
     async (
       { index, error, failedPlugins, envChanges, statuses, timers: timersA },
-      {
-        event,
-        childProcess,
-        package,
-        pluginPackageJson,
-        loadedFrom,
-        origin,
-        buildCommand,
-        buildCommandOrigin,
-      },
+      { event, childProcess, package, pluginPackageJson, loadedFrom, origin, buildCommand, buildCommandOrigin },
     ) => {
       const {
         newIndex = index,
@@ -58,7 +48,6 @@ const runCommands = async function({
       } = await runCommand({
         event,
         childProcess,
-        triggerDeployWithBuildbotServer,
         package,
         pluginPackageJson,
         loadedFrom,
@@ -111,7 +100,6 @@ const runCommands = async function({
 const runCommand = async function({
   event,
   childProcess,
-  triggerDeployWithBuildbotServer,
   package,
   pluginPackageJson,
   loadedFrom,
@@ -206,12 +194,7 @@ const runCommand = async function({
 // `onError()` is not run otherwise.
 // `onEnd()` is always run, regardless of whether the current or other plugins
 // failed.
-const shouldRunCommand = function({
-  event,
-  package,
-  error,
-  failedPlugins,
-}) {
+const shouldRunCommand = function({ event, package, error, failedPlugins }) {
   const isError = error !== undefined || failedPlugins.includes(package)
   if (isError) {
     return isErrorEvent(event)
