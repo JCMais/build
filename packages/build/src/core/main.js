@@ -327,7 +327,6 @@ const initAndRunBuild = async function({
     return await runBuild({
       childProcesses,
       pluginsOptions,
-      triggerDeployWithBuildbotServer,
       netlifyConfig,
       configPath,
       buildDir,
@@ -354,7 +353,6 @@ const initAndRunBuild = async function({
 const runBuild = async function({
   childProcesses,
   pluginsOptions,
-  triggerDeployWithBuildbotServer,
   netlifyConfig,
   configPath,
   buildDir,
@@ -388,7 +386,6 @@ const runBuild = async function({
   }
 
   const { commandsCount: commandsCountA, statuses, timers: timersB } = await runCommands({
-    triggerDeployWithBuildbotServer,
     commands,
     configPath,
     buildDir,
