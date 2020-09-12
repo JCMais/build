@@ -6,14 +6,10 @@ const { EVENTS } = require('../plugins/events')
 
 // Get commands for all events
 const getCommands = function(pluginsCommands, netlifyConfig) {
-  const commands = addBuiltInCommands(pluginsCommands, netlifyConfig)
+  const commands = addBuildCommand(pluginsCommands, netlifyConfig)
   const commandsA = sortCommands(commands)
   const commandsCount = commandsA.filter(({ event }) => !isErrorOnlyEvent(event)).length
   return { commands: commandsA, commandsCount }
-}
-
-const addBuiltInCommands = function(pluginsCommands, netlifyConfig) {
-  return addBuildCommand(pluginsCommands, netlifyConfig)
 }
 
 // Merge `build.command` with plugin event handlers
