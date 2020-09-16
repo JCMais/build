@@ -17,9 +17,6 @@ const startBuildbotClient = async function(buildbotServerSocket) {
 }
 
 const closeBuildbotClient = async function(buildbotClient) {
-  if (buildbotClient === undefined) {
-    return
-  }
   try {
     await promisify(buildbotClient.end.bind(buildbotClient))()
   } catch (error) {
@@ -29,9 +26,6 @@ const closeBuildbotClient = async function(buildbotClient) {
 }
 
 const writePayload = async function(buildbotClient, payload) {
-  if (buildbotClient === undefined) {
-    return
-  }
   try {
     await promisify(buildbotClient.write.bind(buildbotClient))(JSON.stringify(payload))
   } catch (e) {
@@ -42,9 +36,6 @@ const writePayload = async function(buildbotClient, payload) {
 }
 
 const getNextParsedResponsePromise = async function(buildbotClient) {
-  if (buildbotClient === undefined) {
-    return
-  }
   const data = await pEvent(buildbotClient, 'data')
   try {
     return JSON.parse(data)
