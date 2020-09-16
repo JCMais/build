@@ -39,7 +39,7 @@ const writePayload = async function(buildbotClient, payload) {
     await promisify(buildbotClient.write.bind(buildbotClient))(JSON.stringify(payload))
   } catch (e) {
     const error = new Error(`Error writing TCP payload to buildbot: ${e.message}`)
-    addErrorInfo(error, { type: 'buildbotClient ' })
+    addErrorInfo(error, { type: 'buildbotClient' })
     throw error
   }
 }
