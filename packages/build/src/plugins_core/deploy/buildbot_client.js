@@ -6,9 +6,6 @@ const pEvent = require('p-event')
 const { addErrorInfo } = require('../../error/info')
 
 const startBuildbotClient = async function(buildbotServerSocket) {
-  if (buildbotServerSocket === undefined) {
-    return
-  }
   try {
     const buildbotClient = net.createConnection(buildbotServerSocket)
     await pEvent(buildbotClient, 'connect')
