@@ -22,11 +22,16 @@ const CORE_PLUGINS = [
 const EDGE_HANDLERS_PLUGIN_PATH = require.resolve(EDGE_HANDLERS_PLUGIN_NAME)
 
 // Plugins that are installed and enabled by default
-const getCorePlugins = async function({ constants: { FUNCTIONS_SRC, BUILDBOT_SERVER_SOCKET }, buildDir, plugins }) {
+const getCorePlugins = async function({
+  constants: { FUNCTIONS_SRC, BUILDBOT_SERVER_SOCKET },
+  buildDir,
+  plugins,
+  triggerDeployWithBuildbotServer,
+}) {
   const functionsPlugin = getFunctionsPlugin(FUNCTIONS_SRC)
   const functionsInstallPlugin = getFunctionsInstallPlugin(FUNCTIONS_SRC)
   const edgeHandlersPlugin = await getEdgeHandlersPlugin({ buildDir, plugins })
-  const deployPlugin = getDeployPlugin(BUILDBOT_SERVER_SOCKET)
+  const deployPlugin = getDeployPlugin(triggerDeployWithBuildbotServer, BUILDBOT_SERVER_SOCKET)
   return [functionsPlugin, functionsInstallPlugin, edgeHandlersPlugin, deployPlugin].filter(Boolean)
 }
 
@@ -73,8 +78,8 @@ const isEdgeHandlersPlugin = function({ package }) {
 
 const EDGE_HANDLERS_LOCATION = 'edge-handlers'
 
-const getDeployPlugin = function(BUILDBOT_SERVER_SOCKET) {
-  if (BUILDBOT_SERVER_SOCKET === undefined) {
+const getDeployPlugin = function(triggerDeployWithBuildbotServer, BUILDBOT_SERVER_SOCKET) {
+  if (!triggerDeployWithBuildbotServer || BUILDBOT_SERVER_SOCKET === undefined) {
     return
   }
 

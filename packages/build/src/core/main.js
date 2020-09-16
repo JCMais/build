@@ -299,7 +299,6 @@ const initAndRunBuild = async function({
     token,
     mode,
     buildbotServerSocket,
-    triggerDeployWithBuildbotServer,
   })
 
   const { pluginsOptions, timers: timersA } = await getPluginsOptions({
@@ -308,6 +307,7 @@ const initAndRunBuild = async function({
     constants,
     mode,
     buildImagePluginsDir,
+    triggerDeployWithBuildbotServer,
     logs,
     debug,
     timers,
