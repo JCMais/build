@@ -61,9 +61,10 @@ const getNextParsedResponsePromise = async function(buildbotClient) {
 const deploySiteWithBuildbotClient = async function(client) {
   const payload = { action: 'deploySite' }
   try {
-    const nextResponsePromise = getNextParsedResponsePromise(client)
-    await writePayload(client, payload)
-    const response = await nextResponsePromise
+    const [response] = await Promise.all([
+      getNextParsedResponsePromise(client),
+      writePayload(client, payload),
+    ])
 
     if (!response.succeeded) {
       throw new Error(`Deploy did not succeed: ${response.values.error}`)
