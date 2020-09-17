@@ -5,45 +5,43 @@ const pEvent = require('p-event')
 
 const { addErrorInfo } = require('../../error/info')
 
-const startBuildbotClient = async function(buildbotServerSocket) {
+const BUILDBOT_CLIENT_TIMEOUT_PERIOD = 60 * 1000
+
+const createBuildbotClient = async function(buildbotServerSocket) {
+  return net.createConnection(buildbotServerSocket)
+}
+
+const connectBuildbotClient = async function(client) {
   try {
-    const buildbotClient = net.createConnection(buildbotServerSocket)
-    await pEvent(buildbotClient, 'connect')
-    return buildbotClient
+    client.setTimeout(BUILDBOT_CLIENT_TIMEOUT_PERIOD, () => {
+      client.end()
+      const err = new Error('Buildbot client timed out')
+      throw err
+    })
+    await pEvent(client, 'connect')
+    return client
   } catch (error) {
-    addErrorInfo(error, { type: 'buildbotClientConnection' })
+    addErrorInfo(error, { type: 'buildbotClient' })
     throw error
   }
 }
 
-const closeBuildbotClient = async function(buildbotClient) {
+const closeBuildbotClient = async function(client) {
   try {
-    await promisify(buildbotClient.end.bind(buildbotClient))()
+    await promisify(client.end.bind(client))()
   } catch (error) {
-    addErrorInfo(error, { type: 'buildbotClientConnection' })
+    addErrorInfo(error, { type: 'buildbotClient' })
     throw error
   }
 }
 
 const writePayload = async function(buildbotClient, payload) {
-  try {
-    await promisify(buildbotClient.write.bind(buildbotClient))(JSON.stringify(payload))
-  } catch (e) {
-    const error = new Error(`Error writing TCP payload to buildbot: ${e.message}`)
-    addErrorInfo(error, { type: 'buildbotClient' })
-    throw error
-  }
+  await promisify(buildbotClient.write.bind(buildbotClient))(JSON.stringify(payload))
 }
 
 const getNextParsedResponsePromise = async function(buildbotClient) {
   const data = await pEvent(buildbotClient, 'data')
-  try {
-    return JSON.parse(data)
-  } catch (e) {
-    const error = new Error(`Invalid TCP payload received from the buildbot: ${e.message}\n${data}`)
-    addErrorInfo(error, { type: 'buildbotClient' })
-    throw error
-  }
+  return JSON.parse(data)
 }
 
 const deploySiteWithBuildbotClient = async function(client) {
@@ -66,7 +64,8 @@ const deploySiteWithBuildbotClient = async function(client) {
 }
 
 module.exports = {
-  startBuildbotClient,
+  createBuildbotClient,
+  connectBuildbotClient,
   closeBuildbotClient,
   deploySiteWithBuildbotClient,
 }
