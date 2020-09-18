@@ -7,7 +7,7 @@ const { addErrorInfo } = require('../../error/info')
 
 const BUILDBOT_CLIENT_TIMEOUT_PERIOD = 60 * 1000
 
-const createBuildbotClient = async function(buildbotServerSocket) {
+const createBuildbotClient = function(buildbotServerSocket) {
   return net.createConnection(buildbotServerSocket)
 }
 
