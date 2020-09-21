@@ -15,8 +15,6 @@ const connectBuildbotClient = async function(client) {
   try {
     client.setTimeout(BUILDBOT_CLIENT_TIMEOUT_PERIOD, () => {
       client.end()
-      const err = new Error('Buildbot client timed out')
-      throw err
     })
     await pEvent(client, 'connect')
     return client
